@@ -19,8 +19,4 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\OAuth\OAuth10.csproj" />
-  </ItemGroup>
 </Project>
