@@ -8,15 +8,21 @@
     <ProjectVersion>1.0.0</ProjectVersion>
     <PrereleaseSuffix>-pre</PrereleaseSuffix>
     <RevisionSeparator>.</RevisionSeparator>
-    <Revision>1</Revision>
+    <Revision>2</Revision>
     <ReleaseVersion>$(ProjectVersion)$(RevisionSeparator)$(Revision)</ReleaseVersion>
     <PreReleaseVersion>$(ProjectVersion)$(PrereleaseSuffix)$(RevisionSeparator)$(Revision)</PreReleaseVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="ProjectProperties">
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <Nullable>enable</Nullable>
+    <LangVersion>8.0</LangVersion>
     <RootNamespace>MSiccDev.Security.OAuth10</RootNamespace>
+  </PropertyGroup>
+
+  <!--  disable the nullable warnings when compiling for .NET Standard 2.0 -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <NoWarn>$(NoWarn);8600;8601;8602;8603;8604</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Label="NugetProperties">
@@ -27,6 +33,7 @@
     <PackageTags>oauth;dotnet;msiccdev;security;</PackageTags>
     <PackageReleaseNotes>Forked implementation of OAuth 1.0a for .netStandard based on Daniel Crenna's vaulted OAuth library with some changes for my internal needs</PackageReleaseNotes>
     <Authors>Daniel Crenna, Robert Hargreaves, Marco Siccardi</Authors>
+    <Owners>MSiccDev Software Development</Owners>
     <Description>Forked implementation of OAuth 1.0a for .netStandard based on Daniel Crenna's vaulted OAuth library with some changes for my internal needs</Description>
     <PackageTags>Security, OAuth,</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
