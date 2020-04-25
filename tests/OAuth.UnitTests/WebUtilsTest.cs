@@ -2,11 +2,19 @@
 using System.Linq;
 using NUnit.Framework;
 
-namespace OAuth.Tests
+namespace MSiccDev.Security.OAuth10.Tests
 {
     [TestFixture]
     public class WebUtilsTest
     {
+        #region Public Methods
+
+        [TestCase(null)]
+        public void ParseQueryStringThrowsArgumentNullException(string invalidUrl)
+        {
+            _ = Assert.Throws<ArgumentNullException>(() => WebUtils.ParseQueryString(new Uri(invalidUrl)).ToList());
+        }
+
         [TestCase("https://www.google.com", 0)]
         [TestCase("https://www.google.com/", 0)]
         [TestCase("https://www.google.com/?a=b", 1)]
@@ -19,11 +27,6 @@ namespace OAuth.Tests
             Assert.AreEqual(expectedQueryParametersCount, WebUtils.ParseQueryString(new Uri(url)).Count());
         }
 
-        [TestCase(null)]
-        public void ParseQueryStringThrowsArgumentNullException(string invalidUrl)
-        {
-            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-            Assert.Throws<ArgumentNullException>(() => WebUtils.ParseQueryString(new Uri(invalidUrl)).ToList());
-        }
+        #endregion Public Methods
     }
 }

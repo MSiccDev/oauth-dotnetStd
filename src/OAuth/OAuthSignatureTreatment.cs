@@ -1,9 +1,9 @@
-﻿namespace OAuth
+﻿namespace MSiccDev.Security.OAuth10
 {
     /// <summary>
-    /// Specifies whether the final signature value should be escaped during calculation.
-    /// This might be necessary for some OAuth implementations that do not obey the default
-    /// specification for signature escaping.
+    /// Specifies whether the final signature value should be escaped during calculation. This might
+    /// be necessary for some OAuth implementations that do not obey the default specification for
+    /// signature escaping.
     /// </summary>
     public enum OAuthSignatureTreatment
     {

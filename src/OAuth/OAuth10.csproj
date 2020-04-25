@@ -1,0 +1,90 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <Configurations>Debug;Release;DebugNuget;ReleaseNuget</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Versioning">
+    <ProjectVersion>1.0.0</ProjectVersion>
+    <PrereleaseSuffix>-pre</PrereleaseSuffix>
+    <RevisionSeparator>.</RevisionSeparator>
+    <Revision>1</Revision>
+    <ReleaseVersion>$(ProjectVersion)$(RevisionSeparator)$(Revision)</ReleaseVersion>
+    <PreReleaseVersion>$(ProjectVersion)$(PrereleaseSuffix)$(RevisionSeparator)$(Revision)</PreReleaseVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Label="ProjectProperties">
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>MSiccDev.Security.OAuth10</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Label="NugetProperties">
+    <Product>MSiccDev.Security.Oauth10</Product>
+    <PackageId>MSiccDev.Security.OAuth10</PackageId>
+    <Company>MSiccDev Software Development</Company>
+    <Copyright>© 2020 MSiccDev Software Development</Copyright>
+    <PackageTags>oauth;dotnet;msiccdev;security;</PackageTags>
+    <PackageReleaseNotes>Forked implementation of OAuth 1.0a for .netStandard based on Daniel Crenna's vaulted OAuth library with some changes for my internal needs</PackageReleaseNotes>
+    <Authors>Daniel Crenna, Robert Hargreaves, Marco Siccardi</Authors>
+    <Description>Forked implementation of OAuth 1.0a for .netStandard based on Daniel Crenna's vaulted OAuth library with some changes for my internal needs</Description>
+    <PackageTags>Security, OAuth,</PackageTags>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
+    <DefineConstants>DEBUG</DefineConstants>
+    <PackageVersion>$(PreReleaseVersion)</PackageVersion>
+    <DebugType>full</DebugType>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='DebugNuget' ">
+    <DefineConstants>DEBUG</DefineConstants>
+    <PackageVersion>$(PreReleaseVersion)</PackageVersion>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSource>True</IncludeSource>
+    <IncludeSymbols>True</IncludeSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
+    <DefineConstants>RELEASE</DefineConstants>
+    <PackageVersion>$(ReleaseVersion)</PackageVersion>
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='ReleaseNuget' ">
+    <DefineConstants>RELEASE</DefineConstants>
+    <PackageVersion>$(ReleaseVersion)</PackageVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DebugType>pdbonly</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <Target Name="CleanOldNupkg" BeforeTargets="Build">
+    <ItemGroup>
+      <FilesToDelete Include="$(ProjectDir)$(BaseOutputPath)$(Configuration)\$(PackageId).*.nupkg"></FilesToDelete>
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+    <Message Text="Old nupkg in $(ProjectDir)$(BaseOutputPath)$(Configuration) deleted." Importance="High"></Message>
+  </Target>
+
+  <Target Name="PushRelease" AfterTargets="Pack" Condition="'$(Configuration)'=='ReleaseNuget'">
+    <ItemGroup>
+      <PackageToCopy Include="$(ProjectDir)$(BaseOutputPath)$(Configuration)\$(PackageId).*.nupkg"></PackageToCopy>
+    </ItemGroup>
+    <Copy SourceFiles="@(PackageToCopy)" DestinationFolder="C:\TempLocNuget" />
+    <Message Text="Copied '@(PackageToCopy)' to local Nuget folder" Importance="High"></Message>
+  </Target>
+
+  <Target Name="PushDebug" AfterTargets="Pack" Condition="'$(Configuration)'=='DebugNuget'">
+    <ItemGroup>
+      <PackageToCopy Include="$(ProjectDir)$(BaseOutputPath)$(Configuration)\$(PackageId).*.symbols.nupkg"></PackageToCopy>
+    </ItemGroup>
+    <Copy SourceFiles="@(PackageToCopy)" DestinationFiles="@(PackageToCopy->'C:\TempLocNuget\$(PackageId).$(PreReleaseVersion).nupkg')" />
+    <Message Text="Copied '@(PackageToCopy)' to local Nuget folder" Importance="High"></Message>
+  </Target>
+</Project>

@@ -2,14 +2,14 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace OAuth
+namespace MSiccDev.Security.OAuth10
 {
-
     public static class TextSigner
     {
+        #region Public Methods
+
         public static string SignWithRsaSha1(string text, string pemRsaPrivateKey)
         {
-#if NETSTANDARD2_0
             using (var rsa = RSA.Create())
             using (var sha1 = SHA1.Create())
             {
@@ -19,9 +19,8 @@ namespace OAuth
                 var signedHash = rsa.SignHash(hash, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
                 return Convert.ToBase64String(signedHash);
             }
-#else
-            throw new NotImplementedException("RSA-SHA1 is implemented only for dot net standard.");
-#endif
         }
+
+        #endregion Public Methods
     }
 }

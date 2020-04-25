@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-namespace OAuth.Tests
+namespace MSiccDev.Security.OAuth10.Tests
 {
-    public class OAuthRequestTests 
+    public class OAuthRequestTests
     {
+        #region Public Methods
+
         [TestCase(false, null, OAuthRequestType.ProtectedResource)]
         [TestCase(true, "", OAuthRequestType.ProtectedResource)]
         [TestCase(true, "token", OAuthRequestType.ProtectedResource)]
@@ -27,7 +29,7 @@ namespace OAuth.Tests
                 RequestUrl = "http://url",
                 Type = oAuthRequestType
             };
-            Assert.AreEqual(expectedResult,oAuthRequest.GetAuthorizationHeader().Contains("oauth_token"));
+            Assert.AreEqual(expectedResult, oAuthRequest.GetAuthorizationHeader().Contains("oauth_token"));
         }
 
         [TestCase("")]
@@ -45,8 +47,9 @@ namespace OAuth.Tests
                 RequestUrl = "http://url",
                 Type = OAuthRequestType.AccessToken
             };
-            Assert.Throws<ArgumentException>(() => oAuthRequest.GetAuthorizationHeader());
+            _ = Assert.Throws<ArgumentException>(() => oAuthRequest.GetAuthorizationHeader());
         }
 
+        #endregion Public Methods
     }
 }

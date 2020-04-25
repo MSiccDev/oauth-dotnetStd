@@ -1,6 +1,9 @@
-# OAuth [![Build Status](https://travis-ci.org/rhargreaves/oauth-dotnetcore.svg?branch=master)](https://travis-ci.org/rhargreaves/oauth-dotnetcore) [![Build status](https://ci.appveyor.com/api/projects/status/mwdx18uaoo6dmge1/branch/master?svg=true)](https://ci.appveyor.com/project/rhargreaves/oauth-dotnetcore/branch/master) [![nuget](https://img.shields.io/nuget/v/OAuth.DotNetCore.svg)](https://www.nuget.org/packages/OAuth.DotNetCore/)
+# OAuth
 
 ## A public domain OAuth library
+
+> ## WARNING: THIS FORK HAS BEEN CHANGED TO FIT MY OWN NEEDS, PLEASE GO TO THE ORIGINAL REPO IF YOU NEED THIS LIBRARY IN YOUR PROJECT
+
 
 ### Introduction
 Working with OAuth 1.0a is hard. You have to get the signature handling just right, or you'll get

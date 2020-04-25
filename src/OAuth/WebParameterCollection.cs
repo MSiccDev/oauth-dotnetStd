@@ -4,58 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Specialized;
 
-namespace OAuth
+namespace MSiccDev.Security.OAuth10
 {
     public class WebParameterCollection : IList<WebParameter>
     {
+        #region Private Fields
+
         private IList<WebParameter> _parameters;
 
-        public virtual WebParameter this[string name]
-        {
-            get
-            {
-                var parameters = this.Where(p => p.Name.Equals(name));
-                
-                if(parameters.Count() == 0)
-                {
-                    return null;
-                }
+        #endregion Private Fields
 
-                if(parameters.Count() == 1)
-                {
-                    return parameters.Single();
-                }
-
-                var value = string.Join(",", parameters.Select(p => p.Value).ToArray());
-                return new WebParameter(name, value);
-            }
-        }
-
-        public virtual IEnumerable<string> Names
-        {
-            get { return _parameters.Select(p => p.Name); }
-        }
-
-        public virtual IEnumerable<string> Values
-        {
-            get { return _parameters.Select(p => p.Value); }
-        }
-
-        public WebParameterCollection(IEnumerable<WebParameter> parameters)
-        {
-            _parameters = new List<WebParameter>(parameters);
-        }
-
-#if !WINRT
-        public WebParameterCollection(NameValueCollection collection) : this()
-        {
-            AddCollection(collection);
-        }
-
-        public virtual void AddRange(NameValueCollection collection)
-        {
-            AddCollection(collection);
-        }
+        #region Private Methods
 
         private void AddCollection(NameValueCollection collection)
         {
@@ -65,19 +24,32 @@ namespace OAuth
                 _parameters.Add(parameter);
             }
         }
-#endif
 
-        public WebParameterCollection(IDictionary<string, string> collection) : this()
+        private void AddCollection(IEnumerable<WebParameter> collection)
+        {
+            foreach (var pair in collection.Select(parameter => new WebParameter(parameter.Name, parameter.Value)))
+            {
+                _parameters.Add(pair);
+            }
+        }
+
+        #endregion Private Methods
+
+        #region Public Constructors
+
+        public WebParameterCollection(IEnumerable<WebParameter> parameters)
+        {
+            _parameters = new List<WebParameter>(parameters);
+        }
+
+        public WebParameterCollection(NameValueCollection collection) : this()
         {
             AddCollection(collection);
         }
 
-        public void AddCollection(IDictionary<string, string> collection)
+        public WebParameterCollection(IDictionary<string, string> collection) : this()
         {
-            foreach (var parameter in collection.Keys.Select(key => new WebParameter(key, collection[key])))
-            {
-                _parameters.Add(parameter);
-            }
+            AddCollection(collection);
         }
 
         public WebParameterCollection()
@@ -90,12 +62,27 @@ namespace OAuth
             _parameters = new List<WebParameter>(capacity);
         }
 
-        private void AddCollection(IEnumerable<WebParameter> collection)
+        #endregion Public Constructors
+
+        #region Public Methods
+
+        public virtual void Add(string name, string value)
         {
-            foreach (var pair in collection.Select(parameter => new WebParameter(parameter.Name, parameter.Value)))
+            var pair = new WebParameter(name, value);
+            _parameters.Add(pair);
+        }
+
+        public void AddCollection(IDictionary<string, string> collection)
+        {
+            foreach (var parameter in collection.Keys.Select(key => new WebParameter(key, collection[key])))
             {
-                _parameters.Add(pair);
+                _parameters.Add(parameter);
             }
+        }
+
+        public virtual void AddRange(NameValueCollection collection)
+        {
+            AddCollection(collection);
         }
 
         public virtual void AddRange(WebParameterCollection collection)
@@ -108,13 +95,6 @@ namespace OAuth
             AddCollection(collection);
         }
 
-        public virtual void Sort(Comparison<WebParameter> comparison)
-        {
-            var sorted = new List<WebParameter>(_parameters);
-            sorted.Sort(comparison);
-            _parameters = sorted;
-        }
-
         public virtual bool RemoveAll(IEnumerable<WebParameter> parameters)
         {
             var array = parameters.ToArray();
@@ -122,27 +102,60 @@ namespace OAuth
             return success && array.Length > 0;
         }
 
-        public virtual void Add(string name, string value)
+        public virtual void Sort(Comparison<WebParameter> comparison)
         {
-            var pair = new WebParameter(name, value);
-            _parameters.Add(pair);
+            var sorted = new List<WebParameter>(_parameters);
+            sorted.Sort(comparison);
+            _parameters = sorted;
         }
+
+        #endregion Public Methods
+
+        #region Public Properties
+
+        public virtual IEnumerable<string> Names
+        {
+            get { return _parameters.Select(p => p.Name); }
+        }
+
+        public virtual IEnumerable<string> Values
+        {
+            get { return _parameters.Select(p => p.Value); }
+        }
+
+        #endregion Public Properties
+
+        #region Public Indexers
+
+        public virtual WebParameter this[string name]
+        {
+            get
+            {
+                var parameters = this.Where(p => p.Name.Equals(name));
+
+                if (parameters.Count() == 0)
+                {
+#pragma warning disable CS8603 // Possible null reference return.
+                    return null;
+#pragma warning restore CS8603 // Possible null reference return.
+                }
+
+                if (parameters.Count() == 1)
+                {
+                    return parameters.Single();
+                }
+
+                var value = string.Join(",", parameters.Select(p => p.Value).ToArray());
+                return new WebParameter(name, value);
+            }
+        }
+
+        #endregion Public Indexers
 
         #region IList<WebParameter> Members
 
-        public virtual IEnumerator<WebParameter> GetEnumerator()
-        {
-            return _parameters.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
         public virtual void Add(WebParameter parameter)
         {
-            
             _parameters.Add(parameter);
         }
 
@@ -161,19 +174,14 @@ namespace OAuth
             _parameters.CopyTo(parameters, arrayIndex);
         }
 
-        public virtual bool Remove(WebParameter parameter)
+        public virtual IEnumerator<WebParameter> GetEnumerator()
         {
-            return _parameters.Remove(parameter);
+            return _parameters.GetEnumerator();
         }
 
-        public virtual int Count
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            get { return _parameters.Count; }
-        }
-
-        public virtual bool IsReadOnly
-        {
-            get { return _parameters.IsReadOnly; }
+            return GetEnumerator();
         }
 
         public virtual int IndexOf(WebParameter parameter)
@@ -186,9 +194,24 @@ namespace OAuth
             _parameters.Insert(index, parameter);
         }
 
+        public virtual bool Remove(WebParameter parameter)
+        {
+            return _parameters.Remove(parameter);
+        }
+
         public virtual void RemoveAt(int index)
         {
             _parameters.RemoveAt(index);
+        }
+
+        public virtual int Count
+        {
+            get { return _parameters.Count; }
+        }
+
+        public virtual bool IsReadOnly
+        {
+            get { return _parameters.IsReadOnly; }
         }
 
         public virtual WebParameter this[int index]
@@ -197,6 +220,6 @@ namespace OAuth
             set { _parameters[index] = value; }
         }
 
-        #endregion
+        #endregion IList<WebParameter> Members
     }
 }

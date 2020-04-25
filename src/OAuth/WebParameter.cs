@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace OAuth
+namespace MSiccDev.Security.OAuth10
 {
-#if !Smartphone
-    [DebuggerDisplay("{Name}:{Value}")]
-#endif
-#if !SILVERLIGHT && !WINRT
-    [Serializable]
-#endif
     public class WebParameter
     {
+        #region Public Constructors
+
         public WebParameter(string name, string value)
         {
-            Name = name;
-            Value = value;
+            this.Name = name;
+            this.Value = value;
         }
 
-        public string Value { get; set; }
+        #endregion Public Constructors
+
+        #region Public Properties
+
         public string Name { get; private set; }
+        public string Value { get; set; }
+
+        #endregion Public Properties
     }
 }
