@@ -83,20 +83,11 @@ namespace MSiccDev.Security.OAuth10
                 parameters.Add(authParameter);
         }
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
+
         private string GetNewSignature(WebParameterCollection parameters)
         {
-            if (string.IsNullOrWhiteSpace(this.Method))
-                throw new NullReferenceException($"{nameof(this.Method)} must not be null, empty or whitespace");
-
-            if (string.IsNullOrWhiteSpace(this.RequestUrl))
-                throw new NullReferenceException($"{nameof(this.RequestUrl)} must not be null, empty or whitespace");
-
-            if (string.IsNullOrWhiteSpace(this.ConsumerSecret))
-                throw new NullReferenceException($"{nameof(this.ConsumerSecret)} must not be null, empty or whitespace");
-
-            if (string.IsNullOrWhiteSpace(this.TokenSecret))
-                throw new NullReferenceException($"{nameof(this.TokenSecret)} must not be null, empty or whitespace");
-
             var timestamp = OAuthTools.GetTimestamp();
 
             var nonce = OAuthTools.GetNonce();
@@ -112,18 +103,6 @@ namespace MSiccDev.Security.OAuth10
 
         private string GetNewSignatureXAuth(WebParameterCollection parameters)
         {
-            if (string.IsNullOrWhiteSpace(this.Method))
-                throw new NullReferenceException($"{nameof(this.Method)} must not be null, empty or whitespace");
-
-            if (string.IsNullOrWhiteSpace(this.RequestUrl))
-                throw new NullReferenceException($"{nameof(this.RequestUrl)} must not be null, empty or whitespace");
-
-            if (string.IsNullOrWhiteSpace(this.ConsumerSecret))
-                throw new NullReferenceException($"{nameof(this.ConsumerSecret)} must not be null, empty or whitespace");
-
-            if (string.IsNullOrWhiteSpace(this.TokenSecret))
-                throw new NullReferenceException($"{nameof(this.TokenSecret)} must not be null, empty or whitespace");
-
             var timestamp = OAuthTools.GetTimestamp();
 
             var nonce = OAuthTools.GetNonce();
@@ -136,6 +115,9 @@ namespace MSiccDev.Security.OAuth10
 
             return signature;
         }
+
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         private void ValidateAccessRequestState()
         {
