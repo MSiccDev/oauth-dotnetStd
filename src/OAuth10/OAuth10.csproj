@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Versioning">
-    <ProjectVersion>1.0.0</ProjectVersion>
+    <ProjectVersion>1.0.21011</ProjectVersion>
     <PrereleaseSuffix>-pre</PrereleaseSuffix>
     <RevisionSeparator>.</RevisionSeparator>
-    <Revision>3</Revision>
+    <Revision>1</Revision>
     <ReleaseVersion>$(ProjectVersion)$(RevisionSeparator)$(Revision)</ReleaseVersion>
     <PreReleaseVersion>$(ProjectVersion)$(PrereleaseSuffix)$(RevisionSeparator)$(Revision)</PreReleaseVersion>
   </PropertyGroup>
@@ -31,12 +31,15 @@
     <Company>MSiccDev Software Development</Company>
     <Copyright>© 2020 MSiccDev Software Development</Copyright>
     <PackageTags>oauth;dotnet;msiccdev;security;</PackageTags>
-    <PackageReleaseNotes>Forked implementation of OAuth 1.0a for .netStandard based on Daniel Crenna's vaulted OAuth library with some changes for my internal needs</PackageReleaseNotes>
+    <PackageReleaseNotes>Forked implementation of OAuth 1.0a for .netStandard based on Daniel Crenna's vaulted OAuth library with some changes for our internal needs</PackageReleaseNotes>
     <Authors>Daniel Crenna, Robert Hargreaves, Marco Siccardi</Authors>
     <Owners>MSiccDev Software Development</Owners>
     <Description>Forked implementation of OAuth 1.0a for .netStandard based on Daniel Crenna's vaulted OAuth library with some changes for my internal needs</Description>
     <PackageTags>Security, OAuth,</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/MSiccDev/oauth-dotnetStd</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/MSiccDev/oauth-dotnetStd</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
@@ -71,10 +74,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-  </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\..\LICENSE.md">
       <Pack>True</Pack>
@@ -90,19 +89,15 @@
     <Message Text="Old nupkg in $(ProjectDir)$(BaseOutputPath)$(Configuration) deleted." Importance="High"></Message>
   </Target>
 
+  <!--
+  You need to create your own nuget.config file 
+  see https://docs.github.com/en/free-pro-team@latest/packages/guides/configuring-dotnet-cli-for-use-with-github-packages
+  -->
+  <Target Name="PushDebug" AfterTargets="Pack" Condition="'$(Configuration)'=='DebugNuget'">
+    <Exec Command="dotnet nuget push &quot;$(ProjectDir)$(BaseOutputPath)$(Configuration)\$(PackageId).*.symbols.nupkg&quot; -s &quot;github&quot; --skip-duplicate " />
+  </Target>
   <Target Name="PushRelease" AfterTargets="Pack" Condition="'$(Configuration)'=='ReleaseNuget'">
-    <ItemGroup>
-      <PackageToCopy Include="$(ProjectDir)$(BaseOutputPath)$(Configuration)\$(PackageId).*.nupkg"></PackageToCopy>
-    </ItemGroup>
-    <Copy SourceFiles="@(PackageToCopy)" DestinationFolder="C:\TempLocNuget" />
-    <Message Text="Copied '@(PackageToCopy)' to local Nuget folder" Importance="High"></Message>
+    <Exec Command="dotnet nuget push &quot;$(ProjectDir)$(BaseOutputPath)$(Configuration)\$(PackageId).*.nupkg&quot; -s &quot;github&quot; --skip-duplicate " />
   </Target>
 
-  <Target Name="PushDebug" AfterTargets="Pack" Condition="'$(Configuration)'=='DebugNuget'">
-    <ItemGroup>
-      <PackageToCopy Include="$(ProjectDir)$(BaseOutputPath)$(Configuration)\$(PackageId).*.symbols.nupkg"></PackageToCopy>
-    </ItemGroup>
-    <Copy SourceFiles="@(PackageToCopy)" DestinationFiles="@(PackageToCopy->'C:\TempLocNuget\$(PackageId).$(PreReleaseVersion).nupkg')" />
-    <Message Text="Copied '@(PackageToCopy)' to local Nuget folder" Importance="High"></Message>
-  </Target>
 </Project>
